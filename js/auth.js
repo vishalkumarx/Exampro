@@ -1,26 +1,5 @@
 import { auth } from './firebase.js';
 
-// DOM elements
-const authNavItems = document.querySelectorAll('.auth-nav-item');
-const userNavItems = document.querySelectorAll('.user-nav-item');
-const userAvatar = document.getElementById('user-avatar');
-const userName = document.getElementById('user-name');
-
-// Auth state listener
-auth.onAuthStateChanged(user => {
-    if (user) {
-        // User is signed in
-        authNavItems.forEach(item => item.style.display = 'none');
-        userNavItems.forEach(item => item.style.display = 'block');
-        userName.textContent = user.displayName || user.email;
-        userAvatar.src = user.photoURL || 'https://via.placeholder.com/40';
-    } else {
-        // User is signed out
-        authNavItems.forEach(item => item.style.display = 'block');
-        userNavItems.forEach(item => item.style.display = 'none');
-    }
-});
-
 // Sign up function
 export async function signUp(email, password, name) {
     try {
@@ -44,15 +23,6 @@ export async function signIn(email, password) {
     }
 }
 
-// Sign out function
-export async function signOut() {
-    try {
-        await auth.signOut();
-    } catch (error) {
-        throw error;
-    }
-}
-
 // Password reset
 export async function resetPassword(email) {
     try {
@@ -60,4 +30,20 @@ export async function resetPassword(email) {
     } catch (error) {
         throw error;
     }
+}
+
+// Auth state listener (for other pages)
+export function initAuthStateListener() {
+    auth.onAuthStateChanged(user => {
+        const authButtons = document.getElementById('auth-buttons');
+        const userProfile = document.getElementById('user-profile');
+        
+        if (user) {
+            if (authButtons) authButtons.style.display = 'none';
+            if (userProfile) userProfile.style.display = 'block';
+        } else {
+            if (authButtons) authButtons.style.display = 'block';
+            if (userProfile) userProfile.style.display = 'none';
+        }
+    });
 }
