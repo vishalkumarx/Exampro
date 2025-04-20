@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication | ExamPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Logo Header -->
+            <div class="text-center mb-4">
+                <a href="/" class="auth-logo">
+                    <i class="bi bi-journal-bookmark-fill"></i>
+                    <span>ExamPro</span>
+                </a>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-tabs" id="authTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab">
+                        Login
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab">
+                        Register
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content p-4" id="authTabsContent">
+                <!-- Login Form -->
+                <div class="tab-pane fade show active" id="login" role="tabpanel">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                            </div>
+                            <a href="#" id="forgotPasswordLink">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-3">
+                            <span id="loginBtnText">Login</span>
+                            <span id="loginSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                        </button>
+                        <div class="text-center text-danger mb-3" id="loginError"></div>
+                        <div class="text-center">
+                            <p class="mb-0">Or login with</p>
+                            <div class="d-flex justify-content-center gap-3 mt-2">
+                                <button type="button" class="btn btn-outline-primary btn-sm social-btn">
+                                    <i class="bi bi-google"></i> Google
+                                </button>
+                                <button type="button" class="btn btn-outline-primary btn-sm social-btn">
+                                    <i class="bi bi-facebook"></i> Facebook
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div class="tab-pane fade" id="register" role="tabpanel">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="registerName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="registerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="registerEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="registerPassword" required>
+                            <div class="form-text">Minimum 8 characters</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="registerConfirmPassword" required>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-3">
+                            <span id="registerBtnText">Create Account</span>
+                            <span id="registerSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                        </button>
+                        <div class="text-center text-danger mb-3" id="registerError"></div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Password Reset Modal -->
+            <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Reset Password</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="resetPasswordForm">
+                                <div class="mb-3">
+                                    <label for="resetEmail" class="form-label">Email address</label>
+                                    <input type="email" class="form-control" id="resetEmail" required>
+                                </div>
+                                <div class="text-center text-danger mb-3" id="resetError"></div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="resetPasswordBtn">
+                                <span>Send Reset Link</span>
+                                <span id="resetSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/firebase.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        // Initialize the auth page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check URL for mode parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            
+            // Switch to register tab if mode=register
+            if (mode === 'signup') {
+                const registerTab = new bootstrap.Tab(document.getElementById('register-tab'));
+                registerTab.show();
+            }
+
+            // Set up form submissions
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('forgotPasswordLink').addEventListener('click', showResetModal);
+            document.getElementById('resetPasswordBtn').addEventListener('click', handlePasswordReset);
+        });
+
+        // Handle login form submission
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const loginBtnText = document.getElementById('loginBtnText');
+            const loginSpinner = document.getElementById('loginSpinner');
+            const loginError = document.getElementById('loginError');
+            
+            loginBtnText.textContent = 'Logging in...';
+            loginSpinner.classList.remove('d-none');
+            loginError.textContent = '';
+            
+            try {
+                await signIn(email, password);
+                window.location.href = '/'; // Redirect to home after login
+            } catch (error) {
+                console.error('Login error:', error);
+                loginError.textContent = getAuthErrorMessage(error.code);
+            } finally {
+                loginBtnText.textContent = 'Login';
+                loginSpinner.classList.add('d-none');
+            }
+        }
+
+        // Handle registration form submission
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const registerBtnText = document.getElementById('registerBtnText');
+            const registerSpinner = document.getElementById('registerSpinner');
+            const registerError = document.getElementById('registerError');
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                registerError.textContent = 'Passwords do not match';
+                return;
+            }
+            
+            registerBtnText.textContent = 'Creating account...';
+            registerSpinner.classList.remove('d-none');
+            registerError.textContent = '';
+            
+            try {
+                await signUp(email, password, name);
+                window.location.href = '/'; // Redirect to home after registration
+            } catch (error) {
+                console.error('Registration error:', error);
+                registerError.textContent = getAuthErrorMessage(error.code);
+            } finally {
+                registerBtnText.textContent = 'Create Account';
+                registerSpinner.classList.add('d-none');
+            }
+        }
+
+        // Show password reset modal
+        function showResetModal(e) {
+            e.preventDefault();
+            const resetModal = new bootstrap.Modal(document.getElementById('resetPasswordModal'));
+            resetModal.show();
+        }
+
+        // Handle password reset
+        async function handlePasswordReset() {
+            const email = document.getElementById('resetEmail').value;
+            const resetBtn = document.getElementById('resetPasswordBtn');
+            const resetSpinner = document.getElementById('resetSpinner');
+            const resetError = document.getElementById('resetError');
+            
+            resetBtn.disabled = true;
+            resetSpinner.classList.remove('d-none');
+            resetError.textContent = '';
+            
+            try {
+                await resetPassword(email);
+                alert('Password reset email sent! Check your inbox.');
+                const resetModal = bootstrap.Modal.getInstance(document.getElementById('resetPasswordModal'));
+                resetModal.hide();
+            } catch (error) {
+                console.error('Password reset error:', error);
+                resetError.textContent = getAuthErrorMessage(error.code);
+            } finally {
+                resetBtn.disabled = false;
+                resetSpinner.classList.add('d-none');
+            }
+        }
+
+        // Helper function to get user-friendly error messages
+        function getAuthErrorMessage(errorCode) {
+            const messages = {
+                'auth/invalid-email': 'Invalid email address',
+                'auth/user-disabled': 'Account disabled',
+                'auth/user-not-found': 'Account not found',
+                'auth/wrong-password': 'Incorrect password',
+                'auth/email-already-in-use': 'Email already in use',
+                'auth/operation-not-allowed': 'Operation not allowed',
+                'auth/weak-password': 'Password should be at least 6 characters',
+                'auth/too-many-requests': 'Too many attempts. Try again later.'
+            };
+            return messages[errorCode] || 'An error occurred. Please try again.';
+        }
+    </script>
+</body>
+</html>
