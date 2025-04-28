@@ -92,13 +92,50 @@
             margin-bottom: 2rem;
         }
 
-        .exam-search input {
-            padding: 0.8rem;
-            width: 400px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+       .exam-search button {
+    padding: 0.8rem 2rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
+.exam-search button:hover {
+    background: #d32f2f; /* Darker shade for hover */
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(229, 57, 70, 0.3);
+}
+
+.exam-search button:active {
+    transform: translateY(0);
+}
+
+/* Optional: Add search icon */
+.exam-search button i {
+    font-size: 1rem;
+}
+
+/* Update the search input to match */
+.exam-search input {
+    padding: 0.8rem 1.5rem;
+    width: 400px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+    font-size: 1rem;
+}
+
+.exam-search input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(229, 57, 70, 0.1);
+}
         .features {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -206,10 +243,13 @@
     <section class="hero">
         <h1>Prepare for Your Dream Exam</h1>
         <p>Access live classes, mock tests, study material, and more!</p>
-        <div class="exam-search">
-            <input type="text" placeholder="Search for exams...">
-            <button class="get-started">Search</button>
-        </div>
+       <div class="exam-search">
+    <input type="text" placeholder="Search for exams like UPSC, GATE, SSC...">
+    <button class="search-btn">
+        <i class="fas fa-search"></i>
+        Search
+    </button>
+</div>
     </section>
 
     <section class="features">
